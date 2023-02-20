@@ -1,0 +1,298 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct NODE{
+ int data ;
+ struct NODE *left ;
+ struct NODE *right ;
+} NODE ;
+NODE *ROOT ;
+void buildTree(NODE *ptr, int value)
+{
+ if (ptr != NULL)
+ {
+ ptr -> data = value ;
+
+ int lyn ;
+ printf("NODE HAS LEFT SUBTREE (0/1) ? :- ") ;
+ scanf("%d",&lyn) ;
+ if(lyn == 1)
+
+ NODE *lcptr = (NODE *)malloc(sizeof(NODE)) ;
+ ptr -> left = lcptr ;
+ int data ;
+ printf("Input Value :- ") ;
+ scanf("%d",&data) ;
+ buildTree(lcptr, data) ;
+ }
+ else
+ {
+ NODE *lcptr = NULL ;
+ ptr -> left = NULL ;
+ buildTree(lcptr, 0) ;
+ }
+ int ryn ;
+ printf("NODE HAS RIGHT SUBTREE (0/1) ? :- ") ;
+
+ scanf("%d",&ryn) ;
+ if(ryn == 1)
+ {
+ NODE *rcptr = (NODE *)malloc(sizeof(NODE)) ;
+ ptr -> right = rcptr ;
+ int data ;
+ printf("Input Value :- ") ;
+ scanf("%d",&data) ;
+ buildTree(rcptr, data) ;
+ }
+ else
+ {
+ NODE *rcptr = NULL ;
+ ptr -> right = NULL ;
+ buildTree(rcptr, 0) ;
+ }
+ }
+}
+NODE* searchLink(NODE *ptr0, int key)
+{
+ NODE *ptr = ptr0 ;
+ if(ptr -> data != key)
+ {
+ if(ptr ->left != NULL)
+ {
+ searchLink(ptr -> left, key) ;
+ }
+ else
+ {
+ return 0 ;
+ }
+ if(ptr ->right != NULL)
+ {
+ searchLink(ptr -> right, key) ;
+ }
+ else
+ {
+ return 0 ;
+ }
+ }
+ else
+ {
+ return ptr ;
+ }
+}
+void insertNode()
+{
+ int key ;
+ printf("Input Parent Node Data :- ") ;
+ scanf("%d", &key) ;
+ NODE *ptr = searchLink(ROOT, key) ;
+ if(ptr == NULL)
+ {
+ printf("Search is unsuccessful \n") ;
+ return ;
+ }
+ if (ptr -> left == NULL || ptr -> right == NULL)
+ {
+ int choice ;
+ printf("Input 1 for LEFT 2 for RIGHT :- ") ;
+ scanf("%d",&choice) ;
+ if(choice == 1)
+ {
+ if (ptr -> left == NULL )
+ {
+ NODE *new = (NODE *)malloc(sizeof(NODE)) ;
+ printf("Input Value :- ") ;
+ scanf("%d",&new -> data) ;
+ new -> left = NULL ;
+ new -> right = NULL ;
+ ptr -> left = new ;
+ }
+ else
+ {
+ printf("Insertion not possible as Left Child \n") ;
+ return ;
+ }
+ }
+ else if(choice == 2)
+ {
+ if (ptr -> right == NULL )
+ {
+ NODE *new = (NODE *)malloc(sizeof(NODE)) ;
+ printf("Input Value :- ") ;
+ scanf("%d",&new -> data) ;
+ new -> left = NULL ;
+ new -> right = NULL ;
+ ptr -> right = new ;
+ }
+ else
+ {
+ printf("Insertion not possible as Right Child \n") ;
+ return ;
+ }
+ }
+ else
+ {
+ printf("Error in choice\n") ;
+ }
+ }
+ else
+ {
+ printf("Both children are present \n")
+}
+NODE* searchParent(NODE *ptr, int key)
+{
+ NODE *parent = ptr ;
+ if(ptr -> data != key)
+ {
+ NODE *ptr1 = ptr -> left ;
+ NODE *ptr2 = ptr -> right ;
+ if(ptr1 != NULL)
+ {
+ searchParent(ptr1, key) ;
+ }
+ else
+ {
+ parent = NULL ;
+ }
+ if(ptr2 != NULL)
+ {
+ searchParent(ptr2, key) ;
+ }
+ else
+ {
+ parent = NULL ;
+ }
+ }
+ else
+ {
+ return parent ;
+ }
+}
+void deleteNode()
+{
+ NODE *ptr = ROOT ;
+ if(ptr == NULL)
+ {
+ printf("Empty\n") ;
+ return ;
+ }
+ int item ;
+ printf("Input item to be deleted :- ") ;
+ scanf("%d",&item) ;
+ NODE *parent = searchParent(ROOT, item) ;
+ if(parent != NULL)
+ {
+ NODE *ptr1 = parent -> left ;
+ NODE *ptr2 = parent -> right ;
+ if(ptr1 -> data == item)
+ {
+ if(ptr1 -> left == NULL && ptr1 -> right == NULL)
+ {
+ parent -> left = NULL ;
+ printf("Deleted\n") ;
+ }
+ else
+ {
+ printf("Node is not a leaf Node \n") ;
+ }
+ }
+ else
+ {
+ if(ptr2 -> left == NULL && ptr2 -> right == NULL)
+ {
+ parent -> right = NULL ;
+ printf("Deleted\n") ;
+ }
+ else
+ {
+ printf("Node is not a leaf Node \n") ;
+ }
+ }
+ }
+ else
+ {
+ printf("Node does not exist with item %d", item) ;
+ }
+}
+void preOrderTraversal(NODE *PTR)
+{
+ NODE* ptr = PTR ;
+ if(ptr != NULL)
+ {
+ printf("%d\t",ptr -> data) ;
+ preOrderTraversal(ptr -> left) ;
+ preOrderTraversal(ptr -> right) ;
+ }
+}
+void inOrderTraversal(NODE *PTR)
+ NODE* ptr = PTR ;
+ if(ptr != NULL)
+ {
+ inOrderTraversal(ptr -> left) ;
+ printf("%d\t",ptr -> data) ;
+ inOrderTraversal(ptr -> right)
+ }
+}
+void postOrderTraversal(NODE *PTR)
+{
+ NODE* ptr = PTR ;
+ if(ptr != NULL)
+ {
+ postOrderTraversal(ptr -> left) ;
+ postOrderTraversal(ptr -> right) ;
+ printf("%d\t",ptr -> data) ;
+ }
+}
+void main()
+{
+ ROOT = (NODE *)malloc(sizeof(NODE)) ;
+ int value1 ;
+ printf("Input value of root :- ") ;
+ scanf("%d",&value1) ;
+ buildTree(ROOT, value1) ;
+ int choice ;
+ do{
+
+ printf("\nMENU\n") ;
+
+printf("1)INSERT\n2)DELETE\n3)PREORDER\n4)INORDER\n5)POSTORDER\n6)EXIT\n") ;
+ printf("Input Choice :- ") ;
+ scanf("%d",&choice) ;
+ switch(choice)
+ {
+ case 1:
+ {
+ insertNode() ;
+ break ;
+ }
+ case 2:
+ {
+ deleteNode() ;
+ break ;
+ }
+ case 3:
+ {
+ preOrderTraversal(ROOT) ;
+ break ;
+ }
+ case 4:
+ {
+ inOrderTraversal(ROOT) ;
+ break
+ }
+ case 5:
+ {
+ postOrderTraversal(ROOT) ;
+ break ;
+ }
+ case 6:
+ {
+ printf("Exit Point\n") ;
+ break ;
+ }
+ default :
+ {
+ printf("Input Valid Choice (0/1/2/3/4/5/6) \n") ;
+ break ;
+ }
+ }
+ }while(choice != 6) ;
+} 
